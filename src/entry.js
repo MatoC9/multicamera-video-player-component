@@ -5,7 +5,7 @@ function install(Vue) {
         return;
     }
     install.installed = true;
-    Vue.component('MulticameraVideoPlayer', component)
+    Vue.component('MulticameraVideoPlayer', component);
 }
 
 const plugin = {
