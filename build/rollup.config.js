@@ -9,9 +9,15 @@ const argv = minimist(process.argv.slice(2));
 
 const config = {
     input: 'src/entry.js',
+    external: ['hls.js', 'plyr', 'uuid'],
     output: {
         name: 'MulticameraVideoPlayer',
-        exports: 'named'
+        exports: 'named',
+        globals: {
+            'hls.js': 'HLS',
+            'plyr': 'Plyr',
+            'uuid': 'uuid'
+        }
     },
     plugins: [
         replace({
