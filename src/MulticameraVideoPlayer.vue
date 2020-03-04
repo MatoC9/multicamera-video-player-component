@@ -3,6 +3,7 @@
     <div class="playerContainer">
       <div class="playerElement"
            :class="{active: cameraKey === cameraActive}"
+           :style="getVideoPosition(cameraKey)"
            :key="cameraKey"
            v-for="cameraKey in cameraKeys">
         <video :ref="cameraKey"
@@ -61,6 +62,19 @@
         },
         computed: {},
         methods: {
+            getVideoPosition(cameraKey) {
+                if (this.cameraActive === cameraKey) {
+                    return {};
+                }
+
+                if (!this.cameras[this.cameraActive].cameraPositions || !this.cameras[this.cameraActive].cameraPositions[cameraKey]) {
+                    return {display: 'none'};
+                }
+
+                const [x, y] = this.cameras[this.cameraActive].cameraPositions[cameraKey];
+                return {top: `${-50 + y}%`, left: `${-50 + x}%`};
+            },
+
             onClick(e, cameraKey) {
                 if (cameraKey === this.cameraActive) {
                     return;
@@ -68,6 +82,9 @@
 
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
+
+                console.log(cameraKey);
 
                 // TODO: Take in mind fullscreen
             },
@@ -190,7 +207,6 @@
         z-index: 5;
 
         &:not(.active) {
-          display: none;
           z-index: 15;
           -webkit-box-shadow: 0 0 2px 0 rgba(255, 255, 255, 0.5);
           -moz-box-shadow: 0 0 2px 0 rgba(255, 255, 255, 0.5);
@@ -206,9 +222,9 @@
         }
       }
 
-      &:hover {
-        div.playerElement {
-          display: block;
+      &:not(:hover) {
+        div.playerElement:not(.active) {
+          display: none;
         }
       }
     }
