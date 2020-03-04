@@ -6,10 +6,12 @@
       <div class="playerElement"
            :class="{active: cameraKey === cameraActive}"
            :style="getVideoPosition(cameraKey)"
-           @click="onClick($event, cameraKey)"
            :key="cameraKey"
            v-for="cameraKey in cameraKeys">
         <video :ref="cameraKey"/>
+        <div class="playerOverlay"
+             @click="onClick($event, cameraKey)"
+             v-if="cameraKey !== cameraActive"></div>
       </div>
     </div>
   </div>
@@ -137,6 +139,7 @@
                 const [x, y] = this.cameras[this.cameraActive].cameraPositions[cameraKey];
                 return {top: `${-50 + y}%`, left: `${-50 + x}%`};
             },
+
             onDblclick(e) {
                 window.multiCameraVideoPlayer.onFullscreenToggle(e, this.id);
             },
@@ -149,7 +152,9 @@
                 e.stopPropagation();
                 e.stopImmediatePropagation();
 
-                console.log(cameraKey);
+                this.players[this.cameraActive].muted = true;
+                this.cameraActive = cameraKey;
+                this.players[this.cameraActive].muted = false;
             },
 
             onLoad() {
@@ -256,6 +261,7 @@
   @import 'https://cdn.plyr.io/3.5.10/plyr.css';
 
   div.playerWrapper {
+    overflow: hidden;
     width: 100%;
 
     div.playerContainer {
@@ -304,13 +310,21 @@
 
         &:not(.active) {
           z-index: 15;
-          transition: 0.1s;
+          transition: transform 0.1s;
           transform: scale(0.1);
           transform-origin: center;
 
           &:hover {
             transform: scale(0.2);
           }
+        }
+
+        .playerOverlay {
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
         }
       }
     }
