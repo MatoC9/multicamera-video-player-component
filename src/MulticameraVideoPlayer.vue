@@ -152,9 +152,11 @@
                 e.stopPropagation();
                 e.stopImmediatePropagation();
 
+                const isMuted = this.players[this.cameraActive].muted;
+
                 this.players[this.cameraActive].muted = true;
                 this.cameraActive = cameraKey;
-                this.players[this.cameraActive].muted = false;
+                this.players[this.cameraActive].muted = isMuted;
             },
 
             onLoad() {
@@ -310,7 +312,6 @@
 
         &:not(.active) {
           z-index: 15;
-          transition: transform 0.1s;
           transform: scale(0.1);
           transform-origin: center;
 
