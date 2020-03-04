@@ -40,7 +40,7 @@
             controls: {
                 type: Array,
                 required: false,
-                default: () => ['play-large', 'play', /*'progress', 'current-time',*/ 'mute', 'volume', 'captions', 'settings', 'fullscreen'],
+                default: () => ['play-large', 'play', 'mute', 'volume', 'captions', 'settings', 'fullscreen'],
             },
 
             cameras: {
@@ -59,14 +59,7 @@
                 controls_settings: ['captions', 'quality']
             };
         },
-        computed: {
-            inactiveCameraKeys() {
-                return this.cameraKeys.filter(i => i !== this.cameraActive);
-            },
-            inactiveCameras() {
-                return this.inactiveCameraKeys.map(i => this.players[i]);
-            }
-        },
+        computed: {},
         methods: {
             onClick(e, cameraKey) {
                 if (cameraKey === this.cameraActive) {
@@ -96,36 +89,41 @@
                     return;
                 }
 
-                this.inactiveCameras.forEach(p => {
-                    p.play();
-                });
+                this.cameraKeys
+                    .filter(i => i !== this.cameraActive)
+                    .map(i => this.players[i])
+                    .filter(i => i)
+                    .forEach(p => {
+                        p.play();
+                    });
             },
             onPause(cameraKey) {
                 if (cameraKey !== this.cameraActive) {
                     return;
                 }
 
-                this.inactiveCameras.forEach(p => {
-                    p.pause();
-                });
+                this.cameraKeys
+                    .filter(i => i !== this.cameraActive)
+                    .map(i => this.players[i])
+                    .filter(i => i)
+                    .forEach(p => {
+                        p.pause();
+                    });
             },
             onVolumechange(cameraKey, player) {
                 if (cameraKey !== this.cameraActive) {
                     return;
                 }
 
-                this.inactiveCameras.forEach(p => {
-                    p.volume = player.volume;
-                    p.muted = true;
-                });
+                this.cameraKeys
+                    .filter(i => i !== this.cameraActive)
+                    .map(i => this.players[i])
+                    .filter(i => i)
+                    .forEach(p => {
+                        p.volume = player.volume;
+                        p.muted = true;
+                    });
             },
-            /*onTimeupdate(cameraKey, player) {
-                if (cameraKey !== this.cameraActive) {
-                    return;
-                }
-
-                console.log('onTimeupdate', cameraKey, this.inactiveCameras);
-            },*/
         },
         mounted() {
             if (!HLS.isSupported()) {
@@ -168,10 +166,6 @@
                 player.on('volumechange', () => {
                     this.onVolumechange(cameraKey, player);
                 });
-
-                /*player.on('timeupdate', () => {
-                    this.onTimeupdate(cameraKey, player);
-                });*/
             });
         }
     }
