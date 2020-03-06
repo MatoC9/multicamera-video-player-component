@@ -97,7 +97,7 @@
                 required: false,
                 default: 50,
             },
-            mute: {
+            muted: {
                 type: Boolean,
                 required: false,
                 default: false,
