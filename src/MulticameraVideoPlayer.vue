@@ -1,24 +1,30 @@
 <template>
-  <div class="playerWrapper">
+  <div class="playerWrapper"
+       :style="{width, height}">
     <div class="playerContainer"
          :id="`playerContainer-${id}`"
-         @dblclick="onDblclick($event)">
+         @mouseleave="sync()">
       <div class="playerElement"
            :class="{active: cameraKey === cameraActive}"
-           :style="getVideoPosition(cameraKey)"
+           :style="getVideoStyle(cameraKey)"
            :key="cameraKey"
            v-for="cameraKey in cameraKeys">
-        <video :ref="cameraKey"/>
+        <video :ref="cameraKey"
+               @dblclick="onDblclick($event)"/>
         <div class="playerOverlay"
              @click="onClick($event, cameraKey)"
              v-if="cameraKey !== cameraActive"></div>
       </div>
     </div>
+
+    <div class="playerLoading"
+         v-if="loading">
+      <div class="loader"></div>
+    </div>
   </div>
 </template>
 
 <script>
-    /* eslint-disable no-console */
     import * as HLS from 'hls.js';
     import Plyr from 'plyr';
     import {v4 as uuid} from 'uuid';
@@ -70,6 +76,17 @@
     export default {
         name: 'MulticameraVideoPlayer',
         props: {
+            width: {
+                type: String,
+                required: false,
+                default: '100%',
+            },
+            height: {
+                type: String,
+                required: false,
+                default: '',
+            },
+
             autoPlay: {
                 type: Boolean,
                 required: false,
@@ -96,7 +113,8 @@
                 id: uuid(),
                 cameraKeys: Object.keys(this.cameras),
                 cameraActive: Object.keys(this.cameras)[0],
-                players: {}
+                players: {},
+                loading: true
             };
         },
         computed: {},
@@ -127,7 +145,7 @@
                     </button>
                 </div>`;
             },
-            getVideoPosition(cameraKey) {
+            getVideoStyle(cameraKey) {
                 if (this.cameraActive === cameraKey) {
                     return {};
                 }
@@ -156,18 +174,33 @@
 
                 this.players[this.cameraActive].muted = true;
                 this.cameraActive = cameraKey;
-                this.players[this.cameraActive].muted = isMuted;
+                this.players[cameraKey].muted = isMuted;
+            },
+
+            sync() {
+                const {currentTime} = this.players[this.cameraActive];
+
+                this.cameraKeys
+                    .filter(i => i !== this.cameraActive)
+                    .map(i => this.players[i])
+                    .filter(i => i)
+                    .forEach(p => {
+                        p.currentTime = currentTime;
+                    });
             },
 
             onLoad() {
                 if (Object.keys(this.players).length === this.cameraKeys.length) {
                     this.cameraKeys.map(i => this.players[i]).forEach((player, index) => {
+                        player.hideControls = index > 0;
                         player.muted = this.muted || index > 0;
 
                         if (this.autoPlay) {
                             player.play();
                         }
                     });
+
+                    this.loading = false;
                 }
             },
 
@@ -176,13 +209,13 @@
                     return;
                 }
 
+                this.sync();
+
                 this.cameraKeys
                     .filter(i => i !== this.cameraActive)
                     .map(i => this.players[i])
                     .filter(i => i)
-                    .forEach(p => {
-                        p.play();
-                    });
+                    .forEach(p => p.play());
             },
             onPause(cameraKey) {
                 if (cameraKey !== this.cameraActive) {
@@ -193,9 +226,9 @@
                     .filter(i => i !== this.cameraActive)
                     .map(i => this.players[i])
                     .filter(i => i)
-                    .forEach(p => {
-                        p.pause();
-                    });
+                    .forEach(p => p.pause());
+
+                this.sync();
             },
             onVolumechange(cameraKey, player) {
                 if (cameraKey !== this.cameraActive) {
@@ -266,10 +299,14 @@
     overflow: hidden;
     width: 100%;
 
-    div.playerContainer {
-      position: relative;
+    &:not([style~="height:"]):not([style^="height:"]) div.playerContainer {
       height: 0;
       padding-bottom: calc(9 / 16 * 100%);
+    }
+
+    div.playerContainer {
+      position: relative;
+      height: 100%;
 
       &:not(:hover) {
         div.playerElement:not(.active) {
@@ -311,9 +348,13 @@
         z-index: 5;
 
         &:not(.active) {
-          z-index: 15;
+          z-index: 10;
           transform: scale(0.1);
           transform-origin: center;
+
+          -webkit-box-shadow: 0 0 32px 0 rgba(255, 255, 255, 0.5);
+          -moz-box-shadow: 0 0 32px 0 rgba(255, 255, 255, 0.5);
+          box-shadow: 0 0 32px 0 rgba(255, 255, 255, 0.5);
 
           &:hover {
             transform: scale(0.2);
@@ -328,6 +369,67 @@
           left: 0;
         }
       }
+    }
+
+    div.playerLoading {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 15;
+
+      $loaderSize: 128px;
+      $loaderColor: #ffffff;
+      $loaderColorOpacity: 0.25;
+
+      div.loader {
+        border-top: $loaderSize/10 solid rgba($loaderColor, $loaderColorOpacity);
+        border-right: $loaderSize/10 solid rgba($loaderColor, $loaderColorOpacity);
+        border-bottom: $loaderSize/10 solid rgba($loaderColor, $loaderColorOpacity);
+        border-left: $loaderSize/10 solid $loaderColor;
+        -webkit-transform: translateZ(0);
+        -moz-transform: translateZ(0);
+        -ms-transform: translateZ(0);
+        transform: translateZ(0);
+        -webkit-animation: loader 1s infinite linear;
+        -moz-animation: loader 1s infinite linear;
+        animation: loader 1s infinite linear;
+
+        &, &:after {
+          -webkit-border-radius: 50%;
+          -moz-border-radius: 50%;
+          border-radius: 50%;
+          width: $loaderSize;
+          height: $loaderSize;
+        }
+      }
+    }
+  }
+
+  @-webkit-keyframes loader {
+    0% {
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes loader {
+    0% {
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
     }
   }
 </style>
