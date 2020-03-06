@@ -87,7 +87,7 @@
                 default: '',
             },
 
-            autoPlay: {
+            autoplay: {
                 type: Boolean,
                 required: false,
                 default: true,
