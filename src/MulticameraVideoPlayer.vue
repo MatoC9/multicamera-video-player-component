@@ -2,8 +2,7 @@
   <div class="playerWrapper"
        :style="{width, height}">
     <div class="playerContainer"
-         :id="`playerContainer-${id}`"
-         @mouseleave="sync()">
+         :id="`playerContainer-${id}`">
       <div class="playerElement"
            :class="{active: cameraKey === cameraActive}"
            :style="getVideoStyle(cameraKey)"
@@ -121,14 +120,14 @@
         methods: {
             getControls() {
                 return `<div class="plyr__controls">
-                    <button type="button" class="plyr__control" aria-label="Play, {title}" data-plyr="play" style="margin-right: auto;">
+                    <button type="button" class="plyr__control" aria-label="Play, {title}" data-plyr="play">
                         <svg class="icon--pressed" role="presentation"><use xlink:href="#plyr-pause"></use></svg>
                         <svg class="icon--not-pressed" role="presentation"><use xlink:href="#plyr-play"></use></svg>
                         <span class="label--pressed plyr__tooltip" role="tooltip">Pause</span>
                         <span class="label--not-pressed plyr__tooltip" role="tooltip">Play</span>
                     </button>
 
-                    <button type="button" class="plyr__control" aria-label="Mute" data-plyr="mute">
+                    <button type="button" class="plyr__control" aria-label="Mute" data-plyr="mute" style="margin-left: auto;">
                         <svg class="icon--pressed" role="presentation"><use xlink:href="#plyr-muted"></use></svg>
                         <svg class="icon--not-pressed" role="presentation"><use xlink:href="#plyr-volume"></use></svg>
                         <span class="label--pressed plyr__tooltip" role="tooltip">Unmute</span>
@@ -177,25 +176,13 @@
                 this.players[cameraKey].muted = isMuted;
             },
 
-            sync() {
-                const {currentTime} = this.players[this.cameraActive];
-
-                this.cameraKeys
-                    .filter(i => i !== this.cameraActive)
-                    .map(i => this.players[i])
-                    .filter(i => i)
-                    .forEach(p => {
-                        p.currentTime = currentTime;
-                    });
-            },
-
             onLoad() {
                 if (Object.keys(this.players).length === this.cameraKeys.length) {
                     this.cameraKeys.map(i => this.players[i]).forEach((player, index) => {
                         player.hideControls = index > 0;
                         player.muted = this.muted || index > 0;
 
-                        if (this.autoPlay) {
+                        if (this.autoplay) {
                             player.play();
                         }
                     });
@@ -208,8 +195,6 @@
                 if (cameraKey !== this.cameraActive) {
                     return;
                 }
-
-                this.sync();
 
                 this.cameraKeys
                     .filter(i => i !== this.cameraActive)
@@ -227,8 +212,6 @@
                     .map(i => this.players[i])
                     .filter(i => i)
                     .forEach(p => p.pause());
-
-                this.sync();
             },
             onVolumechange(cameraKey, player) {
                 if (cameraKey !== this.cameraActive) {
@@ -358,6 +341,11 @@
 
           &:hover {
             transform: scale(0.2);
+            z-index: 15;
+          }
+
+          div.plyr__controls {
+            display: none;
           }
         }
 
