@@ -33,7 +33,10 @@
     "./sfc": "src/multicamera-video-player.vue"
   },
   "dependencies": {
-    "core-js": "^3.4.4"
+    "core-js": "^3.4.4",
+    "hls.js": "^0.13.2",
+    "plyr": "^3.5.10",
+    "uuid": "^7.0.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.1.0",
