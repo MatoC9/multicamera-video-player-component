@@ -24,9 +24,9 @@
 </template>
 
 <script>
-    import * as HLS from 'hls.js';
+    import * as Hls from 'hls.js';
     import Plyr from 'plyr';
-    import {v4 as uuid} from 'uuid';
+    import {v4 as uuidv4} from 'uuid';
 
     window.multiCameraVideoPlayer = {
         onFullscreenToggle(e, id) {
@@ -73,7 +73,7 @@
     };
 
     export default {
-        name: 'MulticameraVideoPlayer',
+        name: 'multicamera-video-player',
         props: {
             width: {
                 type: String,
@@ -109,7 +109,7 @@
         },
         data() {
             return {
-                id: uuid(),
+                id: uuidv4(),
                 cameraKeys: Object.keys(this.cameras),
                 cameraActive: Object.keys(this.cameras)[0],
                 players: {},
@@ -229,7 +229,7 @@
             },
         },
         mounted() {
-            if (!HLS.isSupported()) {
+            if (!Hls.isSupported()) {
                 throw new Error(`HLS isn't supported`);
             }
 
@@ -248,10 +248,10 @@
                 player.on('ready', e => {
                     const instance = e.detail.plyr;
 
-                    const hls = new HLS();
+                    const hls = new Hls();
                     hls.loadSource(camera.src);
                     hls.attachMedia(instance.media);
-                    hls.on(HLS.Events.MANIFEST_PARSED, () => {
+                    hls.on(Hls.Events.MANIFEST_PARSED, () => {
                         this.players[cameraKey] = instance;
                         this.onLoad();
                     });
@@ -281,6 +281,7 @@
   div.playerWrapper {
     overflow: hidden;
     width: 100%;
+    position: relative;
 
     &:not([style~="height:"]):not([style^="height:"]) div.playerContainer {
       height: 0;

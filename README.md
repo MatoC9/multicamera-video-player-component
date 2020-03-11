@@ -16,10 +16,10 @@ Example Vue file:
 ```html
 <template>
   <div id="app">
-    <MulticameraVideoPlayer width="640px"
-                            :autoplay="true"
-                            :muted="true"
-                            :cameras="cameras"/>
+    <multicamera-video-player width="640px"
+                             :autoplay="true"
+                             :muted="true"
+                             :cameras="cameras"/>
   </div>
 </template>
 
@@ -85,13 +85,20 @@ import MulticameraVideoPlayer from 'multicamera-video-player-component';
 
 Add the multicamera video player component to your HTML:
 ```html
-<MulticameraVideoPlayer width="640px"
-                        :autoplay="true"
-                        :muted="true"
-                        :cameras="CAMERAS_OBJECT"/>
+<multicamera-video-player width="640px"
+                         :autoplay="true"
+                         :muted="true"
+                         :cameras="CAMERAS_OBJECT"/>
 ```
 
 ### Installation via CDN
+TODO
+```html
+<script src="https://unpkg.com/uuid@7.0.2/dist/umd/uuidv4.min.js"></script>
+<script src="https://unpkg.com/plyr@3.5.10/dist/plyr.min.js"></script>
+<script src="https://unpkg.com/hls.js@0.13.2/dist/hls.js"></script>
+<script src="https://unpkg.com/multicamera-video-player-component@0.1.0/dist/multicamera-video-player.min.js"></script>
+```
 TODO
 
 ## Component attributes

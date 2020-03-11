@@ -14,9 +14,9 @@ const config = {
         name: 'MulticameraVideoPlayer',
         exports: 'named',
         globals: {
-            'hls.js': 'HLS',
+            'hls.js': 'Hls',
             'plyr': 'Plyr',
-            'uuid': 'uuid'
+            'uuid': 'uuidv4'
         }
     },
     plugins: [
