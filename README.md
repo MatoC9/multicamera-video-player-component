@@ -34,17 +34,9 @@ Example Vue file:
         data() {
             return {
                 cameras: {
-                    abcNews: {
-                        src: 'https://content.uplynk.com/channel/3324f2467c414329b3b0cc5cd987b6be.m3u8',
-                        cameraPositions: {
-                            Apple_2010: [20, 20]
-                        }
-                    },
-
                     Apple_2010: {
                         src: 'http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8',
                         cameraPositions: {
-                            abcNews: [80, 80],
                             Apple_2019_09: [20, 80],
                             Apple_2019_06: [30, 80]
                         }
@@ -59,7 +51,6 @@ Example Vue file:
                     Apple_2019_09: {
                         src: 'https://p-events-delivery.akamaized.net/0208bkzcptukmgbpuqyfyqjhkxxtzwaw/m3u8/hls_vod_mvp.m3u8',
                         cameraPositions: {
-                            abcNews: [20, 20],
                             Apple_2010: [80, 20],
                             Apple_2019_06: [70, 20]
                         }
@@ -83,6 +74,14 @@ Add import to your Vue file:
 import MulticameraVideoPlayer from 'multicamera-video-player-component';
 ```
 
+Add reference of MulticameraVideoPlayer to components object:
+```javascript
+components: {
+    ...
+    MulticameraVideoPlayer
+}
+```
+
 Add the multicamera video player component to your HTML:
 ```html
 <multicamera-video-player width="640px"
@@ -92,14 +91,21 @@ Add the multicamera video player component to your HTML:
 ```
 
 ### Installation via CDN
-TODO
+Add these script tags to your `<head>` element: 
 ```html
-<script src="https://unpkg.com/uuid@7.0.2/dist/umd/uuidv4.min.js"></script>
+<script src="https://unpkg.com/uuid@7.0.2/dist/umd/uuid.min.js"></script>
 <script src="https://unpkg.com/plyr@3.5.10/dist/plyr.min.js"></script>
 <script src="https://unpkg.com/hls.js@0.13.2/dist/hls.js"></script>
-<script src="https://unpkg.com/multicamera-video-player-component@0.1.0/dist/multicamera-video-player.min.js"></script>
+<script src="https://unpkg.com/multicamera-video-player-component@0.1.1/dist/multicamera-video-player.min.js"></script>
 ```
-TODO
+
+Add the multicamera video player component to your HTML:
+```html
+<multicamera-video-player width="640px"
+                         :autoplay="true"
+                         :muted="true"
+                         :cameras="CAMERAS_OBJECT"/>
+```
 
 ## Component attributes
 

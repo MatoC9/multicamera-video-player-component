@@ -16,7 +16,7 @@ const config = {
         globals: {
             'hls.js': 'Hls',
             'plyr': 'Plyr',
-            'uuid': 'uuidv4'
+            'uuid': 'uuid'
         }
     },
     plugins: [

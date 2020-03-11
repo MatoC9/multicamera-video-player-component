@@ -26,7 +26,7 @@
 <script>
     import * as Hls from 'hls.js';
     import Plyr from 'plyr';
-    import {v4 as uuidv4} from 'uuid';
+    import * as uuid from 'uuid';
 
     window.multiCameraVideoPlayer = {
         onFullscreenToggle(e, id) {
@@ -109,7 +109,7 @@
         },
         data() {
             return {
-                id: uuidv4(),
+                id: uuid.v4(),
                 cameraKeys: Object.keys(this.cameras),
                 cameraActive: Object.keys(this.cameras)[0],
                 players: {},
