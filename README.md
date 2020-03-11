@@ -85,9 +85,9 @@ components: {
 Add the multicamera video player component to your HTML:
 ```html
 <multicamera-video-player width="640px"
-                         :autoplay="true"
-                         :muted="true"
-                         :cameras="CAMERAS_OBJECT"/>
+                          :autoplay="true"
+                          :muted="true"
+                          :cameras="CAMERAS_OBJECT"/>
 ```
 
 ### Installation via CDN
@@ -102,9 +102,9 @@ Add these script tags to your `<head>` element:
 Add the multicamera video player component to your HTML:
 ```html
 <multicamera-video-player width="640px"
-                         :autoplay="true"
-                         :muted="true"
-                         :cameras="CAMERAS_OBJECT"/>
+                          :autoplay="true"
+                          :muted="true"
+                          :cameras="CAMERAS_OBJECT"/>
 ```
 
 ## Component attributes
