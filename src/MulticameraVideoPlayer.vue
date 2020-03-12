@@ -3,6 +3,7 @@
        :style="{width, height}">
     <div class="playerContainer"
          :id="`playerContainer-${id}`">
+      <!-- Create div.playerElement for every available camera -->
       <div class="playerElement"
            :class="{active: cameraKey === cameraActive}"
            :style="getVideoStyle(cameraKey)"
@@ -10,6 +11,7 @@
            v-for="cameraKey in cameraKeys">
         <video :ref="cameraKey"
                @dblclick="onDblclick($event)"/>
+        <!-- playerOverlay for non-active players -->
         <div class="playerOverlay"
              @click="onClick($event, cameraKey)"
              v-if="cameraKey !== cameraActive"></div>
@@ -24,11 +26,18 @@
 </template>
 
 <script>
+    // Import all required libraries from dependencies
     import * as Hls from 'hls.js';
     import Plyr from 'plyr';
     import * as uuid from 'uuid';
 
+    // Register some functions that have to be global
     window.multiCameraVideoPlayer = {
+        /**
+         * Toggle fullscreen of a player
+         * @param {Event} e
+         * @param {string} id UUID generated id of player
+         */
         onFullscreenToggle(e, id) {
             e.preventDefault();
             e.stopPropagation();
@@ -40,6 +49,10 @@
                 window.multiCameraVideoPlayer.fullscreenEnter(id);
             }
         },
+        /**
+         * Enter fullscreen
+         * @param {string} id UUID generated id of player
+         */
         fullscreenEnter(id) {
             const playerSelector = `div#playerContainer-${id}`;
             const playerContainer = document.querySelector(playerSelector);
@@ -59,6 +72,9 @@
                 throw new Error(`Full screen isn't supported`);
             }
         },
+        /**
+         * Exit fullscreen
+         */
         fullscreenExit() {
             if (document.exitFullscreen) {
                 document.exitFullscreen();
@@ -72,52 +88,55 @@
         },
     };
 
-    export default {
-        name: 'multicamera-video-player',
-        props: {
-            width: {
+    export default { // Export Vue component
+        name: 'multicamera-video-player', // HTML tag of component
+        props: { // HTML tag attributes
+            width: { // Width of player
                 type: String,
                 required: false,
                 default: '100%',
             },
-            height: {
+            height: { // Height of player
                 type: String,
                 required: false,
-                default: '',
+                default: '', // defaults to 16/9 ratio equivalent
             },
 
-            autoplay: {
+            autoplay: { // Whether videos start playing after loading all of them
                 type: Boolean,
                 required: false,
                 default: true,
             },
-            volume: {
+            volume: { // Default volume
                 type: Number,
                 required: false,
                 default: 50,
             },
-            muted: {
+            muted: { // Whether main video is muted after loading
                 type: Boolean,
                 required: false,
                 default: false,
             },
 
-            cameras: {
+            cameras: { // Object containing details about cameras
                 type: Object,
                 required: true,
             }
         },
-        data() {
+        data() { // Data used in component
             return {
-                id: uuid.v4(),
-                cameraKeys: Object.keys(this.cameras),
-                cameraActive: Object.keys(this.cameras)[0],
-                players: {},
-                loading: true
+                id: uuid.v4(), // Every player needs to have unique ID generated
+                cameraKeys: Object.keys(this.cameras), // List of camera keys
+                cameraActive: Object.keys(this.cameras)[0], // Active camera key
+                players: {}, // Object of Plyr instances
+                loading: true // Whether or not video streams are still loading
             };
         },
-        computed: {},
-        methods: {
+        methods: { // Methods used in components
+            /**
+             * Returns HTML code of player controls
+             * @returns {string} HTML code for player controls
+             */
             getControls() {
                 return `<div class="plyr__controls">
                     <button type="button" class="plyr__control" aria-label="Play, {title}" data-plyr="play">
@@ -144,6 +163,11 @@
                     </button>
                 </div>`;
             },
+            /**
+             * Returns css styling for video player
+             * @param {string} cameraKey ID of player
+             * @returns {{}} Object representation of CSS styling
+             */
             getVideoStyle(cameraKey) {
                 if (this.cameraActive === cameraKey) {
                     return {};
@@ -156,10 +180,18 @@
                 const [x, y] = this.cameras[this.cameraActive].cameraPositions[cameraKey];
                 return {top: `${-50 + y}%`, left: `${-50 + x}%`};
             },
-
+            /**
+             * double-click event listener
+             * @param {Event} e
+             */
             onDblclick(e) {
                 window.multiCameraVideoPlayer.onFullscreenToggle(e, this.id);
             },
+            /**
+             * click event listener
+             * @param {Event} e
+             * @param {string} cameraKey ID of player clicked on
+             */
             onClick(e, cameraKey) {
                 if (cameraKey === this.cameraActive) {
                     return;
@@ -175,7 +207,9 @@
                 this.cameraActive = cameraKey;
                 this.players[cameraKey].muted = isMuted;
             },
-
+            /**
+             * HLS' load event listener
+             */
             onLoad() {
                 if (Object.keys(this.players).length === this.cameraKeys.length) {
                     this.cameraKeys.map(i => this.players[i]).forEach((player, index) => {
@@ -190,7 +224,10 @@
                     this.loading = false;
                 }
             },
-
+            /**
+             * play event listener
+             * @param {string} cameraKey ID of player that started playing
+             */
             onPlay(cameraKey) {
                 if (cameraKey !== this.cameraActive) {
                     return;
@@ -202,6 +239,10 @@
                     .filter(i => i)
                     .forEach(p => p.play());
             },
+            /**
+             * pause event listener
+             * @param {string} cameraKey ID of player that has been paused
+             */
             onPause(cameraKey) {
                 if (cameraKey !== this.cameraActive) {
                     return;
@@ -213,6 +254,11 @@
                     .filter(i => i)
                     .forEach(p => p.pause());
             },
+            /**
+             * volumechange event listener
+             * @param {string} cameraKey ID of player that volume has been changed
+             * @param {Object} player Plyr player instance
+             */
             onVolumechange(cameraKey, player) {
                 if (cameraKey !== this.cameraActive) {
                     return;
@@ -228,15 +274,19 @@
                     });
             },
         },
+        // Vue lifecycle hook called after mounting component into HTML
         mounted() {
+            // Check whether HLS is supported by browser
             if (!Hls.isSupported()) {
                 throw new Error(`HLS isn't supported`);
             }
 
+            // Look through all cameras and initiate them
             this.cameraKeys.forEach(cameraKey => {
                 const camera = this.cameras[cameraKey];
                 const video = this.$refs[cameraKey];
 
+                // Create Plyr player instance
                 const player = new Plyr(video, {
                     controls: this.getControls(),
                     settings: this.controls_settings,
@@ -245,6 +295,7 @@
                     fullscreen: {enabled: false}
                 });
 
+                // After Plyr player is ready load HLS
                 player.on('ready', e => {
                     const instance = e.detail.plyr;
 
@@ -257,18 +308,18 @@
                     });
                 });
 
-                player.on('playing', (e) => {
-                    this.onPlay(cameraKey, player, e);
+                // Add event listeners for Plyr player
+                player.on('playing', () => {
+                    this.onPlay(cameraKey);
                 });
-                player.on('play', (e) => {
-                    this.onPlay(cameraKey, player, e);
+                player.on('play', () => {
+                    this.onPlay(cameraKey);
                 });
-                player.on('pause', (e) => {
-                    this.onPause(cameraKey, player, e);
+                player.on('pause', () => {
+                    this.onPause(cameraKey);
                 });
-
-                player.on('volumechange', (e) => {
-                    this.onVolumechange(cameraKey, player, e);
+                player.on('volumechange', () => {
+                    this.onVolumechange(cameraKey, player);
                 });
             });
         }
@@ -333,12 +384,9 @@
 
         &:not(.active) {
           z-index: 10;
-          transform: scale(0.1);
-          transform-origin: center;
-
-          -webkit-box-shadow: 0 0 32px 0 rgba(255, 255, 255, 0.5);
-          -moz-box-shadow: 0 0 32px 0 rgba(255, 255, 255, 0.5);
-          box-shadow: 0 0 32px 0 rgba(255, 255, 255, 0.5);
+          @include prefix(transform, scale(0.1));
+          @include prefix(transform-origin, center);
+          @include prefix(box-shadow, 0 0 32px 0 rgba(255, 255, 255, 0.5));
 
           &:hover {
             transform: scale(0.2);
@@ -381,20 +429,13 @@
         border-right: $loaderSize/10 solid rgba($loaderColor, $loaderColorOpacity);
         border-bottom: $loaderSize/10 solid rgba($loaderColor, $loaderColorOpacity);
         border-left: $loaderSize/10 solid $loaderColor;
-        -webkit-transform: translateZ(0);
-        -moz-transform: translateZ(0);
-        -ms-transform: translateZ(0);
-        transform: translateZ(0);
-        -webkit-animation: loader 1s infinite linear;
-        -moz-animation: loader 1s infinite linear;
-        animation: loader 1s infinite linear;
+        @include prefix(transform, translateZ(0));
+        @include prefix(animation, loader 1s infinite linear);
 
         &, &:after {
-          -webkit-border-radius: 50%;
-          -moz-border-radius: 50%;
-          border-radius: 50%;
           width: $loaderSize;
           height: $loaderSize;
+          @include prefix(border-radius, 50%);
         }
       }
     }
@@ -419,6 +460,12 @@
     100% {
       -webkit-transform: rotate(360deg);
       transform: rotate(360deg);
+    }
+  }
+
+  @mixin prefix($property, $parameters...) {
+    @each $prefix in -webkit-, -moz-, -ms-, -o-, "" {
+      #{$prefix}#{$property}: $parameters;
     }
   }
 </style>
