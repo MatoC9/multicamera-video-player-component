@@ -96,7 +96,7 @@ Add these script tags to your `<head>` element:
 <script src="https://unpkg.com/uuid@7.0.2/dist/umd/uuid.min.js"></script>
 <script src="https://unpkg.com/plyr@3.5.10/dist/plyr.min.js"></script>
 <script src="https://unpkg.com/hls.js@0.13.2/dist/hls.js"></script>
-<script src="https://unpkg.com/multicamera-video-player-component@0.1.3/dist/multicamera-video-player.min.js"></script>
+<script src="https://unpkg.com/multicamera-video-player-component@0.1.4/dist/multicamera-video-player.min.js"></script>
 ```
 
 Add the multicamera video player component to your HTML:
@@ -112,7 +112,7 @@ Add the multicamera video player component to your HTML:
 | Attribute | Type    | Required | Default value         |
 | --------- | ------- | -------- | --------------------- |
 | width     | String  | No       | 100%                  |
-| height    | String  | No       | 16/9 ratio equivalent |
+| height    | String  | No       | 16:9 ratio equivalent |
 | autoplay  | Boolean | No       | true                  |
 | volume    | Number  | No       | 50                    |
 | muted     | Boolean | No       | false                 |

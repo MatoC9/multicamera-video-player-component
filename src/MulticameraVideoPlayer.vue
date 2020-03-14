@@ -291,6 +291,7 @@
                     controls: this.getControls(),
                     settings: this.controls_settings,
                     autoplay: false,
+                    volume: this.volume,
                     muted: true,
                     fullscreen: {enabled: false}
                 });
