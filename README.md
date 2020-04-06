@@ -95,8 +95,8 @@ Add these script tags to your `<head>` element:
 ```html
 <script src="https://unpkg.com/uuid@7.0.2/dist/umd/uuid.min.js"></script>
 <script src="https://unpkg.com/plyr@3.5.10/dist/plyr.min.js"></script>
-<script src="https://unpkg.com/hls.js@0.13.2/dist/hls.js"></script>
-<script src="https://unpkg.com/multicamera-video-player-component@0.1.4/dist/multicamera-video-player.min.js"></script>
+<script src="https://unpkg.com/hls.js@0.13.2/dist/hls.min.js"></script>
+<script src="https://unpkg.com/multicamera-video-player-component@0.1.5/dist/multicamera-video-player.min.js"></script>
 ```
 
 Add the multicamera video player component to your HTML:

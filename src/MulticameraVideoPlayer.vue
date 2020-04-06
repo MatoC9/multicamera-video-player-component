@@ -225,6 +225,16 @@
                 }
             },
             /**
+             * get not active players
+             * @returns {[]} array of not active players
+             */
+            getNotActivePlayers() {
+                return this.cameraKeys
+                    .filter(i => i !== this.cameraActive)
+                    .map(i => this.players[i])
+                    .filter(i => i);
+            },
+            /**
              * play event listener
              * @param {string} cameraKey ID of player that started playing
              */
@@ -233,11 +243,7 @@
                     return;
                 }
 
-                this.cameraKeys
-                    .filter(i => i !== this.cameraActive)
-                    .map(i => this.players[i])
-                    .filter(i => i)
-                    .forEach(p => p.play());
+                this.getNotActivePlayers().forEach(p => p.play());
             },
             /**
              * pause event listener
@@ -248,11 +254,7 @@
                     return;
                 }
 
-                this.cameraKeys
-                    .filter(i => i !== this.cameraActive)
-                    .map(i => this.players[i])
-                    .filter(i => i)
-                    .forEach(p => p.pause());
+                this.getNotActivePlayers().forEach(p => p.pause());
             },
             /**
              * volumechange event listener
@@ -264,14 +266,10 @@
                     return;
                 }
 
-                this.cameraKeys
-                    .filter(i => i !== this.cameraActive)
-                    .map(i => this.players[i])
-                    .filter(i => i)
-                    .forEach(p => {
-                        p.volume = player.volume;
-                        p.muted = true;
-                    });
+                this.getNotActivePlayers().forEach(p => {
+                    p.volume = player.volume;
+                    p.muted = true;
+                });
             },
         },
         // Vue lifecycle hook called after mounting component into HTML
@@ -329,6 +327,12 @@
 
 <style lang="scss">
   @import 'https://cdn.plyr.io/3.5.10/plyr.css';
+
+  @mixin prefix($property, $parameters...) {
+    @each $prefix in -webkit-, -moz-, -ms-, -o-, "" {
+      #{$prefix}#{$property}: $parameters;
+    }
+  }
 
   div.playerWrapper {
     overflow: hidden;
@@ -461,12 +465,6 @@
     100% {
       -webkit-transform: rotate(360deg);
       transform: rotate(360deg);
-    }
-  }
-
-  @mixin prefix($property, $parameters...) {
-    @each $prefix in -webkit-, -moz-, -ms-, -o-, "" {
-      #{$prefix}#{$property}: $parameters;
     }
   }
 </style>
