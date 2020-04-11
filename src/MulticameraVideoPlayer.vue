@@ -193,6 +193,10 @@
                         player.hideControls = index > 0;
                         player.muted = this.muted || index > 0;
 
+                        if (!this.muted && index === 0) {
+                            player.volume = this.volume / 100;
+                        }
+
                         if (this.autoplay) {
                             player.play();
                         }
@@ -265,8 +269,9 @@
                     controls: this.getControls(),
                     settings: this.controls_settings,
                     autoplay: false,
-                    volume: this.volume,
+                    volume: 0,
                     muted: true,
+                    clickToPlay: false,
                     fullscreen: {enabled: false}
                 });
 
