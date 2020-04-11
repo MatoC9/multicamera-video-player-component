@@ -138,30 +138,7 @@
              * @returns {string} HTML code for player controls
              */
             getControls() {
-                return `<div class="plyr__controls">
-                    <button type="button" class="plyr__control" aria-label="Play, {title}" data-plyr="play">
-                        <svg class="icon--pressed" role="presentation"><use xlink:href="#plyr-pause"></use></svg>
-                        <svg class="icon--not-pressed" role="presentation"><use xlink:href="#plyr-play"></use></svg>
-                        <span class="label--pressed plyr__tooltip" role="tooltip">Pause</span>
-                        <span class="label--not-pressed plyr__tooltip" role="tooltip">Play</span>
-                    </button>
-
-                    <button type="button" class="plyr__control" aria-label="Mute" data-plyr="mute" style="margin-left: auto;">
-                        <svg class="icon--pressed" role="presentation"><use xlink:href="#plyr-muted"></use></svg>
-                        <svg class="icon--not-pressed" role="presentation"><use xlink:href="#plyr-volume"></use></svg>
-                        <span class="label--pressed plyr__tooltip" role="tooltip">Unmute</span>
-                        <span class="label--not-pressed plyr__tooltip" role="tooltip">Mute</span>
-                    </button>
-                    <div class="plyr__volume">
-                        <input data-plyr="volume" type="range" min="0" max="1" step="0.05" value="1" autocomplete="off" aria-label="Volume">
-                    </div>
-                    <button type="button" class="plyr__control plyr__control" onclick="multiCameraVideoPlayer.onFullscreenToggle(event, '${this.id}')">
-                        <svg class="fullscreen-show" role="presentation"><use xlink:href="#plyr-exit-fullscreen"></use></svg>
-                        <svg class="fullscreen-hide" role="presentation"><use xlink:href="#plyr-enter-fullscreen"></use></svg>
-                        <span class="fullscreen-show plyr__tooltip" role="tooltip">Exit fullscreen</span>
-                        <span class="fullscreen-hide plyr__tooltip" role="tooltip">Enter fullscreen</span>
-                    </button>
-                </div>`;
+                return `<div class="plyr__controls"><button type="button" class="plyr__control" aria-label="Play, {title}" data-plyr="play"><svg class="icon--pressed" role="presentation"><use xlink:href="#plyr-pause"></use></svg><svg class="icon--not-pressed" role="presentation"><use xlink:href="#plyr-play"></use></svg><span class="label--pressed plyr__tooltip" role="tooltip">Pause</span><span class="label--not-pressed plyr__tooltip" role="tooltip">Play</span></button><button type="button" class="plyr__control" aria-label="Mute" data-plyr="mute" style="margin-left: auto;"><svg class="icon--pressed" role="presentation"><use xlink:href="#plyr-muted"></use></svg><svg class="icon--not-pressed" role="presentation"><use xlink:href="#plyr-volume"></use></svg><span class="label--pressed plyr__tooltip" role="tooltip">Unmute</span><span class="label--not-pressed plyr__tooltip" role="tooltip">Mute</span></button><div class="plyr__volume"><input data-plyr="volume" type="range" min="0" max="1" step="0.05" value="1" autocomplete="off" aria-label="Volume"></div><button type="button" class="plyr__control plyr__control" onclick="multiCameraVideoPlayer.onFullscreenToggle(event, '${this.id}')"><svg class="fullscreen-show" role="presentation"><use xlink:href="#plyr-exit-fullscreen"></use></svg><svg class="fullscreen-hide" role="presentation"><use xlink:href="#plyr-enter-fullscreen"></use></svg><span class="fullscreen-show plyr__tooltip" role="tooltip">Exit fullscreen</span><span class="fullscreen-hide plyr__tooltip" role="tooltip">Enter fullscreen</span></button></div>`;
             },
             /**
              * Returns css styling for video player
@@ -272,8 +249,7 @@
                 });
             },
         },
-        // Vue lifecycle hook called after mounting component into HTML
-        mounted() {
+        mounted() { // Vue lifecycle hook called after mounting component into HTML
             // Check whether HLS is supported by browser
             if (!Hls.isSupported()) {
                 throw new Error(`HLS isn't supported`);
