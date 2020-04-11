@@ -249,8 +249,7 @@
                 });
             },
         },
-        // Vue lifecycle hook called after mounting component into HTML
-        mounted() {
+        mounted() { // Vue lifecycle hook called after mounting component into HTML
             // Check whether HLS is supported by browser
             if (!Hls.isSupported()) {
                 throw new Error(`HLS isn't supported`);
